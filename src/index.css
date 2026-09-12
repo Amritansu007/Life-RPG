@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design Tokens (CSS Custom Properties) ──────────────────────────── */
+:root {
+  --color-abyss: #160f23;
+  --color-void: #1a1025;
+  --color-gold: #d4af37;
+  --color-gold-dim: #b8962e;
+  --color-violet: #4c3a6e;
+  --color-parchment: #e8dcc8;
+}
+
+/* ── Theme: Obsidian Veil ────────────────────────────────────────────── */
+[data-theme="obsidian-veil"] {
+  --color-abyss: #0a0a0f;
+  --color-void: #0f0f14;
+  --color-violet: #241f33;
+  --color-parchment: #f0ece0;
+  /* Gold stays — this theme is about deeper contrast, not a different accent */
+}
+
+/* ── Theme: Crimson Ember ────────────────────────────────────────────── */
+[data-theme="crimson-ember"] {
+  --color-abyss: #1a0f0f;
+  --color-void: #201212;
+  --color-violet: #4c2a2a;
+  --color-gold: #c0392b;
+  --color-gold-dim: #922b21;
+  /* Red replaces gold as the accent, per the item description */
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* ── Smooth theme transitions ──────────────────────────────────── */
+  *,
+  *::before,
+  *::after {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 0.35s;
+    transition-timing-function: ease-in-out;
+  }
+
+  /* Opt out for elements that manage their own transitions (animations, etc.) */
+  [data-no-theme-transition],
+  [data-no-theme-transition] *,
+  .animate-spin,
+  .animate-pulse,
+  .skeleton {
+    transition-property: none !important;
+  }
+
+  html {
+    font-family: 'Manrope', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-abyss text-parchment min-h-screen;
+    overflow-x: hidden;
+  }
+
+  /* ── Noise / grain texture overlay ────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* ── Scrollbar styling ──────────────────────────────────── */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-abyss, #160f23);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-violet, #4c3a6e);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #6b5a8e;
+  }
+
+  /* ── Focus ring — replaces browser default ─────────────── */
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-abyss, #160f23), 0 0 0 4px rgba(212, 175, 55, 0.6);
+    border-radius: 4px;
+  }
+
+  /* ── Selection color ───────────────────────────────────── */
+  ::selection {
+    background: rgba(212, 175, 55, 0.3);
+    color: var(--color-parchment, #e8dcc8);
+  }
+}
+
+@layer components {
+  /* ── Noise texture for card surfaces ─────────────────── */
+  .card-texture {
+    position: relative;
+  }
+
+  .card-texture::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 128px 128px;
+  }
+
+  /* ── Skeleton shimmer ────────────────────────────────── */
+  .skeleton {
+    @apply bg-gradient-to-r from-void-light via-violet-deep to-void-light;
+    background-size: 200% 100%;
+    animation: shimmer 2s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  .text-shadow-gold {
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  }
+
+  .border-glow {
+    border: 1px solid rgba(76, 58, 110, 0.5);
+    box-shadow: inset 0 1px 8px 0 rgba(76, 58, 110, 0.15);
+  }
+}
