@@ -95,7 +95,7 @@ export function ShopPage({ userId }: ShopProps) {
     );
 
     try {
-      const updatedProfile = await purchaseItem(itemId);
+      await purchaseItem(itemId);
 
       // Keep the current Shop profile up to date.
       await refetchProfile();
@@ -254,8 +254,8 @@ export function ShopPage({ userId }: ShopProps) {
               key={tab}
               onClick={() => setFilter(tab)}
               className={`px-4 py-1.5 rounded-full text-xs font-body font-semibold tracking-wider capitalize transition-all ${filter === tab
-                  ? 'bg-gold text-abyss shadow-md'
-                  : 'text-bone/60 hover:text-parchment hover:bg-violet-deep/40'
+                ? 'bg-gold text-abyss shadow-md'
+                : 'text-bone/60 hover:text-parchment hover:bg-violet-deep/40'
                 }`}
             >
               {tab === 'all'
