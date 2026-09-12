@@ -16,15 +16,22 @@ function AppContent() {
   const { toast } = useToast();
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
 
-  // Fetch profile at the app level so we can thread equipped_theme to AppShell
+  // Fetch profile at the app level so the equipped theme
+  // can be passed to AppShell when the app loads.
   const { profile } = useProfile(user?.id);
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast('You have left the realm. Return when you are ready.', 'info');
+      toast(
+        'You have left the realm. Return when you are ready.',
+        'info'
+      );
     } catch {
-      toast('The realm refuses to release you. Try again.', 'error');
+      toast(
+        'The realm refuses to release you. Try again.',
+        'error'
+      );
     }
   };
 
@@ -40,12 +47,21 @@ function AppContent() {
   }
 
   if (!user) {
-    return <LoginPage onSignIn={signIn} onSignUp={signUp} />;
+    return (
+      <LoginPage
+        onSignIn={signIn}
+        onSignUp={signUp}
+      />
+    );
   }
 
   return (
     <AppShell
-      username={user.user_metadata?.username || user.email?.split('@')[0] || 'Adventurer'}
+      username={
+        user.user_metadata?.username ||
+        user.email?.split('@')[0] ||
+        'Adventurer'
+      }
       currentView={currentView}
       equippedTheme={profile?.equipped_theme}
       onViewChange={setCurrentView}
@@ -58,18 +74,27 @@ function AppContent() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            transition={{
+              type: 'spring',
+              stiffness: 300,
+              damping: 25,
+            }}
           >
             <Dashboard userId={user.id} />
           </motion.div>
         )}
+
         {currentView === 'shop' && (
           <motion.div
             key="shop"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            transition={{
+              type: 'spring',
+              stiffness: 300,
+              damping: 25,
+            }}
           >
             <ShopPage userId={user.id} />
           </motion.div>

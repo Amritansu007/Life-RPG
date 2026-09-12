@@ -1,4 +1,10 @@
-import { type ReactNode, type Dispatch, type SetStateAction, useRef } from 'react';
+import {
+  type ReactNode,
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+} from 'react';
 import { motion } from 'framer-motion';
 import { Sword, LogOut, ShoppingBag, ScrollText } from 'lucide-react';
 import type { ViewState } from '../../lib/types';
@@ -12,20 +18,44 @@ interface AppShellProps {
   onSignOut: () => void;
 }
 
-export function AppShell({ children, username, currentView, equippedTheme, onViewChange, onSignOut }: AppShellProps) {
-  // Only set data-theme when it's not the default — :root values apply otherwise
-  const themeAttr = equippedTheme && equippedTheme !== 'default' ? equippedTheme : undefined;
+export function AppShell({
+  children,
+  username,
+  currentView,
+  equippedTheme,
+  onViewChange,
+  onSignOut,
+}: AppShellProps) {
   const mainRef = useRef<HTMLElement>(null);
 
-  const handleSkipToContent = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  useEffect(() => {
+    const theme =
+      equippedTheme && equippedTheme !== 'default'
+        ? equippedTheme
+        : '';
+
+    if (theme) {
+      document.body.setAttribute('data-theme', theme);
+    } else {
+      document.body.removeAttribute('data-theme');
+    }
+
+    return () => {
+      document.body.removeAttribute('data-theme');
+    };
+  }, [equippedTheme]);
+
+  const handleSkipToContent = (
+    e: React.MouseEvent<HTMLAnchorElement>
+  ) => {
     e.preventDefault();
     mainRef.current?.focus();
     window.history.pushState(null, '', '#main-content');
   };
 
   return (
-    <div className="min-h-screen flex flex-col" data-theme={themeAttr}>
-      {/* Skip to content — lives here so it has access to the main ref */}
+    <div className="min-h-screen flex flex-col">
+      {/* Skip to content */}
       <a
         href="#main-content"
         onClick={handleSkipToContent}
@@ -35,11 +65,18 @@ export function AppShell({ children, username, currentView, equippedTheme, onVie
       </a>
 
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-abyss/80 backdrop-blur-md border-b border-violet/15" aria-label="Main navigation">
+      <nav
+        className="sticky top-0 z-50 bg-abyss/80 backdrop-blur-md border-b border-violet/15"
+        aria-label="Main navigation"
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
           {/* Logo */}
           <div className="flex items-center gap-2.5 mr-auto">
-            <Sword className="h-5 w-5 text-gold" strokeWidth={1.5} />
+            <Sword
+              className="h-5 w-5 text-gold"
+              strokeWidth={1.5}
+            />
+
             <span className="font-display text-sm text-gold tracking-wider hidden sm:inline">
               Life RPG
             </span>
@@ -50,13 +87,24 @@ export function AppShell({ children, username, currentView, equippedTheme, onVie
             <NavButton
               active={currentView === 'dashboard'}
               onClick={() => onViewChange('dashboard')}
-              icon={<ScrollText className="h-4 w-4" strokeWidth={1.5} />}
+              icon={
+                <ScrollText
+                  className="h-4 w-4"
+                  strokeWidth={1.5}
+                />
+              }
               label="Quests"
             />
+
             <NavButton
               active={currentView === 'shop'}
               onClick={() => onViewChange('shop')}
-              icon={<ShoppingBag className="h-4 w-4" strokeWidth={1.5} />}
+              icon={
+                <ShoppingBag
+                  className="h-4 w-4"
+                  strokeWidth={1.5}
+                />
+              }
               label="Emporium"
             />
           </div>
@@ -66,18 +114,22 @@ export function AppShell({ children, username, currentView, equippedTheme, onVie
             <span className="text-xs font-body text-bone/40 hidden sm:inline truncate max-w-[100px]">
               {username}
             </span>
+
             <button
               onClick={onSignOut}
               className="p-1.5 rounded text-bone/40 hover:text-crimson hover:bg-crimson/10 transition-colors"
               aria-label="Log out"
             >
-              <LogOut className="h-4 w-4" strokeWidth={1.5} />
+              <LogOut
+                className="h-4 w-4"
+                strokeWidth={1.5}
+              />
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Content — tabIndex={-1} makes it programmatically focusable for skip link */}
+      {/* Content */}
       <main
         id="main-content"
         ref={mainRef}
@@ -117,12 +169,20 @@ function NavButton({
       aria-current={active ? 'page' : undefined}
     >
       {icon}
-      <span className="text-[9px] sm:text-xs leading-tight">{label}</span>
+
+      <span className="text-[9px] sm:text-xs leading-tight">
+        {label}
+      </span>
+
       {active && (
         <motion.div
           layoutId="nav-indicator"
           className="absolute -bottom-[9px] left-2 right-2 h-[2px] bg-gold rounded-full"
-          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          transition={{
+            type: 'spring',
+            stiffness: 400,
+            damping: 30,
+          }}
         />
       )}
     </motion.button>
